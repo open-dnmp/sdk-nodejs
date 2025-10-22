@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "protocol.json",
+
+  "definitions": {
+    "execute": { "type": "string" },
+
+    "middlewares": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+
+    "action": {
+      "type": "object",
+      "properties": {
+        "contract": { "type": "string" },
+        "execute": { "$ref": "#/definitions/execute" }
+      },
+      "required": ["contract", "execute"],
+      "additionalProperties": false
+    },
+
+    "cron": {
+      "type": "object",
+      "properties": {
+        "timezone": {
+          "type": "string",
+          "pattern": "^([a-zA-Z_]{2,14}\/){1,2}[a-zA-Z_]{2,14}$"
+        },
+        "jobs": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "pattern": { "type": "string" },
+              "execute": { "$ref": "#/definitions/execute" },
+              "onComplete": { "$ref": "#/definitions/execute" },
+              "onError": { "$ref": "#/definitions/execute" }
+            },
+            "required": ["pattern", "execute"],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": ["timezone", "jobs"],
+      "additionalProperties": false
+    },
+
+    "processors": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "contract": { "type": "string" },
+          "execute": { "$ref": "#/definitions/execute" },
+          "onComplete": { "$ref": "#/definitions/execute" },
+          "onError": { "$ref": "#/definitions/execute" }
+        },
+        "required": ["contract", "execute"]
+      }
+    },
+
+    "gateway": {
+      "type": "object",
+      "properties": {
+        "http": {
+          "type": "object",
+          "properties": {
+            "middlewares": { "$ref": "#/definitions/middlewares" },
+            "routes": {
+              "type": "object",
+              "patternProperties": {
+                "^(GET|POST|PUT|PATCH|DELETE)\\s\\/(\\/|\\w)+$": {
+                  "type": "object",
+                  "properties": {
+                    "middlewares": { "$ref": "#/definitions/middlewares" },
+                    "contract": { "type": "string" },
+                    "execute": { "$ref": "#/definitions/execute" },
+                    "alias": { "type": "string" }
+                  },
+                  "oneOf": [
+                    { "required": ["contract", "execute"] },
+                    { "required": ["alias"] }
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "required": ["routes"],
+          "additionalProperties": false
+        },
+        "events": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "contract": { "type": "string" },
+              "execute": { "$ref": "#/definitions/execute" },
+              "onError": { "$ref": "#/definitions/execute" }
+            },
+            "required": ["contract", "execute"],
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+
+    "service": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "type": "integer", "minimum": 1 },
+        "transports": { "$ref": "./transports.json" },
+        "actions": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/definitions/action" }
+        }
+      },
+      "required": ["name", "version", "transports", "actions"],
+      "additionalProperties": false
+    }
+  },
+
+  "type": "object",
+  "properties": {
+    "dependencies": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": { "type": "string" }
+      }
+    },
+    "hooks": {
+      "type": "object",
+      "properties": {
+        "init": { "type": "string" },
+        "started": { "type": "string" },
+        "stopped": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "services": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/service" }
+    },
+    "gateway": { "$ref": "#/definitions/gateway" },
+    "processors": { "$ref": "#/definitions/processors" },
+    "cron": { "$ref": "#/definitions/cron" }
+  },
+  "required": ["dependencies"],
+  "additionalProperties": false
+}

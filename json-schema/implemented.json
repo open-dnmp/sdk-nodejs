@@ -1,0 +1,197 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "$id": "implemented.json",
+
+  "definitions": {
+    "execute": {},
+
+    "middlewares": {
+      "type": "array",
+      "items": {}
+    },
+
+    "contract": {
+      "type": "object",
+      "properties": {
+        "meta": { "type": "object", "additionalProperties": true },
+        "headers": {},
+        "input": {},
+        "output": {},
+        "execute": {},
+        "executePath": { "type": "string" }
+      },
+      "required": [
+        "meta",
+        "headers",
+        "input",
+        "output",
+        "execute",
+        "executePath"
+      ],
+      "additionalProperties": false
+    },
+
+    "action": {
+      "type": "object",
+      "properties": {
+        "meta": { "type": "object", "additionalProperties": true },
+        "headers": {},
+        "input": {},
+        "output": {},
+        "execute": {},
+        "executePath": { "type": "string" },
+        "alias": { "type": "string" }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "meta",
+            "headers",
+            "input",
+            "output",
+            "execute",
+            "executePath"
+          ]
+        },
+        {
+          "required": ["alias"]
+        }
+      ],
+      "additionalProperties": false
+    },
+
+    "cron": {
+      "type": "object",
+      "properties": {
+        "timezone": {
+          "type": "string",
+          "pattern": "^([a-zA-Z_]{2,14}\/){1,2}[a-zA-Z_]{2,14}$"
+        },
+        "jobs": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "pattern": { "type": "string" },
+              "execute": { "$ref": "#/definitions/execute" },
+              "onComplete": { "$ref": "#/definitions/execute" },
+              "onError": { "$ref": "#/definitions/execute" }
+            },
+            "required": ["pattern", "execute"],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": ["timezone", "jobs"],
+      "additionalProperties": false
+    },
+
+    "processors": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "meta": { "type": "object", "additionalProperties": true },
+          "headers": {},
+          "input": {},
+          "output": {},
+          "execute": {},
+          "onComplete": {},
+          "onError": {}
+        },
+        "required": [
+          "meta",
+          "headers",
+          "input",
+          "output",
+          "execute"
+        ]
+      }
+    },
+
+    "gateway": {
+      "type": "object",
+      "properties": {
+        "http": {
+          "type": "object",
+          "properties": {
+            "middlewares": { "$ref": "#/definitions/middlewares" },
+            "routes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "middlewares": { "$ref": "#/definitions/middlewares" },
+                  "url": { "type": "string" },
+                  "method": { "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"] },
+                  "action": { "$ref": "#/definitions/action" }
+                },
+                "required": ["url", "method", "action"],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": ["middlewares", "routes"],
+          "additionalProperties": false
+        },
+        "events": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "meta": { "type": "object", "additionalProperties": true },
+              "headers": {},
+              "input": {},
+              "output": {},
+              "execute": {},
+              "onError": {}
+            },
+            "required": [
+              "meta",
+              "headers",
+              "input",
+              "output",
+              "execute"
+            ]
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "service": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "version": { "$ref": "./protocol.json#/definitions/service/properties/version" },
+        "transports": { "$ref": "./transports.json" },
+        "actions": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/definitions/contract" }
+        }
+      },
+      "required": ["name", "version", "transports", "actions"],
+      "additionalProperties": false
+    }
+  },
+
+  "type": "object",
+  "properties": {
+    "dependencies": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": { "type": "string" }
+      }
+    },
+    "services": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/service" }
+    },
+    "gateway": { "$ref": "#/definitions/gateway" },
+    "processors": { "$ref": "#/definitions/processors" },
+    "cron": { "$ref": "#/definitions/cron" }
+  },
+  "required": ["dependencies"],
+  "additionalProperties": false
+}
