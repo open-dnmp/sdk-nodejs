@@ -12,6 +12,6 @@
 <br>
 <br>
 
-# Distributed Node Interface Protocol
+# Distributed Node Meta Protocol
 
 Documentation: [https://open-dnmp.github.io/docs](https://open-dnmp.github.io/docs)
