@@ -1,9 +1,9 @@
 <br>
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/open-dnmp/dnmp-devkit/master/assets/logo-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/open-dnmp/dnmp-devkit/master/assets/logo-light.svg">
-  <img align="right" alt="dnmp logo" src="https://raw.githubusercontent.com/open-dnmp/dnmp-devkit/master/assets/logo-light.svg" width="128" height="auto">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/open-dnmp/sdk-nodejs/master/assets/logo-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/open-dnmp/sdk-nodejs/master/assets/logo-light.svg">
+  <img align="right" alt="dnmp logo" src="https://raw.githubusercontent.com/open-dnmp/sdk-nodejs/master/assets/logo-light.svg" width="128" height="auto">
 </picture>
 
 <br>

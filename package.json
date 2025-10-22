@@ -4,7 +4,7 @@
   "author": "volodymyr.sentiurin@gmail.com",
   "description": "DNMP SDK Node.js",
   "license": "Apache-2.0",
-  "homepage": "https://open-dnmp.github.io/docs/sdk/nodejs",
+  "homepage": "https://open-dnmp.github.io/docs",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/open-dnmp/sdk-nodejs.git"
